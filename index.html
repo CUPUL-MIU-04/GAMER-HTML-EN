@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Games - Classic Games Collection</title>
+    <meta name="description" content="Collection of classic games created with HTML, CSS and JavaScript. Enjoy games like Snake, Hangman, Guess the Card and more.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --neon-pink: #ff2d75;
+            --neon-blue: #00f3ff;
+            --neon-purple: #9d00ff;
+            --neon-green: #00ff9d;
+            --dark-color: #2d3436;
+            --light-color: #f5f6fa;
+            --success-color: #00b894;
+            --error-color: #d63031;
+            --neon-color: #00f3ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: var(--light-color);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.2);
+        }
+        
+        h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--neon-color);
+            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color);
+            animation: neonGlow 1.5s ease-in-out infinite alternate;
+            position: relative;
+            padding: 1rem;
+        }
+        
+        @keyframes neonGlow {
+            from {
+                text-shadow: 0 0 5px var(--neon-color), 0 0 10px var(--neon-color);
+            }
+            to {
+                text-shadow: 0 0 10px var(--neon-color), 0 0 20px var(--neon-color), 0 0 30px var(--neon-color);
+            }
+        }
+        
+        .subtitle {
+            color: var(--light-color);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .game-card {
+            background: rgba(15, 12, 41, 0.7);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background-size: 400%;
+            border-radius: 12px;
+            z-index: -1;
+            opacity: 0;
+            transition: 0.5s;
+        }
+        
+        .game-card:hover::before {
+            opacity: 1;
+            animation: borderGlow 3s linear infinite;
+        }
+        
+        @keyframes borderGlow {
+            0% {
+                background-position: 0 0;
+            }
+            50% {
+                background-position: 300% 0;
+            }
+            100% {
+                background-position: 0 0;
+            }
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 243, 255, 0.3);
+        }
+        
+        .game-card a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }
+        
+        .game-image-container {
+            height: 180px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .game-image {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.5));
+        }
+        
+        .game-card:hover .game-image {
+            transform: scale(1.1);
+        }
+        
+        .game-info {
+            padding: 1.5rem;
+        }
+        
+        .game-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--neon-color);
+            font-size: 1.3rem;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5));
+        }
+        
+        .game-desc {
+            color: var(--light-color);
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .play-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(108, 92, 231, 0.5));
+        }
+        
+        .play-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .game-card:hover .play-btn {
+            background: linear-gradient(45deg, var(--accent-color), var(--primary-color));
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(253, 121, 168, 0.7));
+        }
+        
+        .game-card:hover .play-btn::before {
+            left: 100%;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light-color);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* Styles for ads */
+        .ad-container {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Styles for donation section */
+        .donation-section {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+        }
+        
+        .donation-title {
+            font-size: 1.5rem;
+            color: var(--neon-color);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5));
+        }
+        
+        .donation-text {
+            margin-bottom: 1.5rem;
+            color: var(--light-color);
+            opacity: 0.9;
+        }
+        
+        .paypal-button {
+            background: linear-gradient(45deg, #0070ba, #00a8e8);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 0 10px rgba(0, 168, 232, 0.5));
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .paypal-button:hover {
+            background: linear-gradient(45deg, #00a8e8, #0070ba);
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(0, 168, 232, 0.7));
+        }
+        
+        .paypal-button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .paypal-button:hover::after {
+            left: 100%;
+        }
+        
+        .paypal-button img {
+            margin-right: 0.5rem;
+            height: 20px;
+        }
+        
+        /* New styles for version and status */
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-size: 0.8rem;
+        }
+        
+        .game-version {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        .game-status {
+            color: var(--accent-color);
+            font-style: italic;
+        }
+        
+        /* Custom cursor effect */
+        body {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%2300f3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>'), auto;
+        }
+        
+        a, button {
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="%2300f3ff" stroke="%2300f3ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg>'), pointer;
+        }
+        
+        /* Loading effect */
+        .loader-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f0c29;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid transparent;
+            border-top-color: var(--neon-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            position: relative;
+        }
+        
+        .loader::before, .loader::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            border: 5px solid transparent;
+        }
+        
+        .loader::before {
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-top-color: var(--accent-color);
+            animation: spin 2s linear infinite;
+        }
+        
+        .loader::after {
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            bottom: 15px;
+            border-top-color: var(--primary-color);
+            animation: spin 3s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Custom scroll effect */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #0f0c29;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--primary-color), var(--accent-color));
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--accent-color), var(--primary-color));
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading effect -->
+    <div class="loader-wrapper">
+        <div class="loader"></div>
+    </div>
+    
+    <!-- Particles effect -->
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <header>
+            <h1>My HTML Games</h1>
+            <p class="subtitle">A collection of classic games created with HTML, CSS and JavaScript. Have fun playing!</p>
+        </header>
+        
+        <!-- Ad 1 -->
+        <div class="ad-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3869365676003245"
+                 crossorigin="anonymous"></script>
+            <!-- ads -->
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:550px;height:50px"
+                 data-ad-client="ca-pub-3869365676003245"
+                 data-ad-slot="6790058992"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        
+        <div class="games-grid">
+            <div class="game-card">
+                <a href="Adivina-la-Carta/Adivina-la-Carta.html">
+                    <div class="game-image-container">
+                        <img src="https://github.com/CUPUL-MIU-04/GAMER-HTML/raw/master/Adivina-la-Carta/assets/Adivina-la-Carta2.png" 
+                             alt="Guess the Card" 
+                             class="game-image">
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">Guess the Card</h3>
+                        <div class="game-meta">
+                            <span class="game-version">Version 3.0.9🗒️</span>
+                            <span class="game-status">STABLE🛠️</span>
+                        </div>
+                        <p class="game-desc">Can you guess if the next card will be higher or lower? Test your intuition in this exciting card game.</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="game-card">
+                <a href="Snake-Multiplataforma/Snake-Multiplataforma.html">
+                    <div class="game-image-container">
+                        <img src="https://github.com/CUPUL-MIU-04/GAMER-HTML/raw/master/Snake-Multiplataforma/assets/Snake-Multiplataforma2.png" 
+                             alt="Classic Snake" 
+                             class="game-image">
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">Snake Premium</h3>
+                        <div class="game-meta">
+                            <span class="game-version">Version 4.2.9🗒️</span>
+                            <span class="game-status">STABLE🛠️</span>
+                        </div>
+                        <p class="game-desc">The classic snake game. Eat as many fruits as possible without crashing into walls or yourself.</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="game-card">
+                <a href="Juego-del-Ahorcado/Juego-del-Ahorcado.html">
+                    <div class="game-image-container">
+                        <img src="https://github.com/CUPUL-MIU-04/GAMER-HTML/raw/master/Juego-del-Ahorcado/assets/Juego-del-Ahorcado2.png" 
+                             alt="Hangman Game" 
+                             class="game-image">
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">Hangman</h3>
+                        <div class="game-meta">
+                            <span class="game-version">Version 5.1🗒️</span>
+                            <span class="game-status">STABLE🛠️</span>
+                        </div>
+                        <p class="game-desc">Guess the word letter by letter before the hangman drawing is completed. Test your vocabulary!</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="game-card">
+                <a href="Adivina-el-Número/Adivina-el-Número.html">
+                    <div class="game-image-container">
+                        <img src="https://github.com/CUPUL-MIU-04/GAMER-HTML/raw/master/Adivina-el-N%C3%BAmero/assets/Adivina-el-N%C3%BAmero2.png" 
+                             alt="Guess the Number" 
+                             class="game-image">
+                    </div>
+                    <div class="game-info">
+                        <h3 class="game-title">Guess the Number</h3>
+                        <div class="game-meta">
+                            <span class="game-version">Version 2.5.5🗒️</span>
+                            <span class="game-status">STABLE🛠️</span>
+                        </div>
+                        <p class="game-desc">Try to guess the secret number in the fewest attempts possible. Each clue brings you closer to victory!</p>
+                        <span class="play-btn">Play Now</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Ad 2 -->
+        <div class="ad-container">
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3869365676003245"
+                 crossorigin="anonymous"></script>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:360px;height:150px"
+                 data-ad-client="ca-pub-3869365676003245"
+                 data-ad-slot="8675622789"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        
+        <div class="donation-section">
+            <h2 class="donation-title">Support this project!</h2>
+            <p class="donation-text">If you enjoy these games, consider making a donation to help maintain and improve this site and add more HTML games.</p>
+            
+            <a href="Donación/Donación.html" 
+               target="_blank" 
+               class="paypal-button" 
+               style="text-decoration: none; display: inline-block;">
+                <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal Logo">
+                View donation options
+            </a>
+        </div>
+        
+        <!-- Footer with terminal effect -->
+        <footer class="animate__animated animate__fadeIn animate__delay-4s">
+            <div class="terminal-effect">
+                <p>© 2023 HTML GAMES COLLECTION | CREATED WITH <span style="color: var(--neon-pink);">❤️</span> BY <strong style="color: var(--neon-blue);">LUIS04</strong> | <span style="color: var(--neon-green);">JAVASCRIPT</span> | <span style="color: var(--neon-purple);">VERSION 2.0</span></p>
+            </div>
+            <p style="margin-top: 1rem;">All rights reserved. Reproduction in whole or in part without authorization is prohibited.</p>
+        </footer>
+    </div>
+
+    <!-- Particles script -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Loading effect
+        window.addEventListener('load', function() {
+            const loaderWrapper = document.querySelector('.loader-wrapper');
+            loaderWrapper.style.opacity = '0';
+            setTimeout(() => {
+                loaderWrapper.style.display = 'none';
+            }, 500);
+        });
+        
+        // Particles configuration
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#00f3ff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.5,
+                        "random": false,
+                        "anim": {
+                            "enable": false,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": false,
+                            "speed": 40,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#6c5ce7",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+            
+            // Sound effect on button hover
+            const buttons = document.querySelectorAll('.play-btn, .paypal-button');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3');
+                    audio.volume = 0.2;
+                    audio.play();
+                });
+            });
+        });
+    </script>
+</body>
+</html>

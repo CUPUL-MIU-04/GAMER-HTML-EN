@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Juego para 5 Jugadores</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        #gameArea { margin: 20px auto; padding: 20px; border: 1px solid #ccc; max-width: 800px; }
+        .player { display: inline-block; width: 150px; margin: 10px; padding: 10px; border: 1px solid #ddd; }
+        #actions { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Juego para 5 Jugadores</h1>
+    <div id="gameArea">
+        <div id="players"></div>
+        <div id="gameState">Esperando jugadores...</div>
+        <div id="actions">
+            <button id="joinBtn">Unirse al Juego</button>
+            <button id="startBtn" disabled>Iniciar Juego</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

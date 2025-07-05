@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Games - Donations</title>
+    <meta name="description" content="Support HTML game development with your donation">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --primary-light: #a29bfe;
+            --primary-dark: #5649c0;
+            --neon-pink: #ff2d75;
+            --neon-blue: #00f3ff;
+            --neon-purple: #9d00ff;
+            --neon-green: #00ff9d;
+            --accent-color: #fd79a8;
+            --dark-color: #2d3436;
+            --light-color: #f5f6fa;
+            --success-color: #00b894;
+            --paypal-color: #0070ba;
+            --paypal-hover: #005b95;
+            --transition: all 0.3s ease;
+            --glow-color: rgba(108, 92, 231, 0.4);
+        }
+        
+        /* Particle container style */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--light-color);
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            background: rgba(25, 25, 45, 0.85);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            position: relative;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(108, 92, 231, 0.2);
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .donation-section {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1) 0%, rgba(162, 155, 254, 0.1) 100%);
+            border-radius: 15px;
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .donation-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: -1;
+        }
+        
+        .donation-section:hover::before {
+            opacity: 0.6;
+        }
+        
+        .donation-title {
+            text-align: center;
+            color: var(--primary-light);
+            margin-bottom: 1.5rem;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(108, 92, 231, 0.4);
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .donation-title::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            margin: 0.5rem auto 0;
+            border-radius: 3px;
+        }
+        
+        .donation-subtitle {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+        }
+        
+        .donation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .donation-card {
+            background: rgba(30, 30, 55, 0.7);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: var(--transition);
+            border: 1px solid rgba(108, 92, 231, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .donation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+        
+        .donation-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary-color);
+        }
+        
+        .payment-logo {
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            display: block;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+            transition: var(--transition);
+        }
+        
+        .donation-card:hover .payment-logo {
+            transform: scale(1.05);
+        }
+        
+        .donation-card-title {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            color: var(--light-color);
+        }
+        
+        .amount-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .amount-btn {
+            background: rgba(45, 45, 75, 0.7);
+            border: 1px solid rgba(108, 92, 231, 0.3);
+            border-radius: 8px;
+            padding: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            color: var(--light-color);
+        }
+        
+        .amount-btn:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .amount-btn.selected {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 15px var(--glow-color);
+            border-color: var(--primary-dark);
+        }
+        
+        .custom-amount {
+            margin: 1.5rem 0;
+        }
+        
+        .custom-amount label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .amount-input {
+            width: 100%;
+            padding: 0.9rem 1rem;
+            background: rgba(30, 30, 55, 0.7);
+            border: 2px solid rgba(108, 92, 231, 0.3);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: white;
+            transition: var(--transition);
+        }
+        
+        .amount-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .amount-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--glow-color);
+        }
+        
+        .donate-btn {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            color: white;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .donate-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .donate-btn:hover::before {
+            left: 100%;
+        }
+        
+        .paypal-btn {
+            background: var(--paypal-color);
+            box-shadow: 0 4px 15px rgba(0, 112, 186, 0.3);
+        }
+        
+        .paypal-btn:hover {
+            background: var(--paypal-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 112, 186, 0.4);
+        }
+        
+        .security-note {
+            text-align: center;
+            margin-top: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.7rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Confetti effect */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary-color);
+            opacity: 0;
+            animation: confetti-fall 5s linear forwards;
+            z-index: 1000;
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .container {
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+            
+            .donation-section {
+                padding: 1.5rem;
+            }
+            
+            .donation-title {
+                font-size: 1.8rem;
+            }
+            
+            .amount-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle container -->
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <!-- Donation Section -->
+        <section class="donation-section">
+            <h2 class="donation-title">SUPPORT THE PROJECT</h2>
+            <p class="donation-subtitle">Your donation helps a lot! With your support I can continue developing more HTML games that you can enjoy directly in your Google browser.</p>
+            
+            <div class="donation-grid">
+                <!-- PayPal Card -->
+                <div class="donation-card">
+                    <img src="https://www.paypalobjects.com/webstatic/mktg/Logo/pp-logo-100px.png" alt="PayPal" class="payment-logo">
+                    <h3 class="donation-card-title"><i class="fab fa-paypal"></i> Donate with PayPal</h3>
+                    
+                    <div class="amount-options" id="paypal-amounts">
+                        <button class="amount-btn" data-amount="5">$5</button>
+                        <button class="amount-btn" data-amount="10">$10</button>
+                        <button class="amount-btn" data-amount="20">$20</button>
+                    </div>
+                    
+                    <div class="custom-amount">
+                        <label for="paypal-custom-amount">Or specify your amount:</label>
+                        <input type="number" id="paypal-custom-amount" class="amount-input" min="1" value="10" placeholder="Ex: 50">
+                    </div>
+                    
+                    <form action="https://www.paypal.com/donate" method="post" target="_blank" id="paypal-form">
+                        <input type="hidden" name="business" value="Gamer-Html@outlook.com">
+                        <input type="hidden" name="currency_code" value="USD">
+                        <input type="hidden" name="amount" id="paypal-amount" value="10">
+                        <input type="hidden" name="item_name" value="Donation for HTML Games">
+                        <button type="submit" class="donate-btn paypal-btn">
+                            <i class="fab fa-paypal"></i> Donate with PayPal
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            <p class="security-note">
+                <i class="fas fa-lock" style="color: var(--success-color);"></i>
+                All transactions are secure and encrypted
+            </p>
+        </section>
+        
+        <footer>
+            <p>© <span id="current-year">2023</span> HTML Games | Created with <i class="fas fa-heart" style="color: var(--accent-color);"></i></p>
+</span> BY <strong style="color: var(--neon-blue);">LUIS04</strong> | <span style="color: var(--neon-green);">JAVASCRIPT</span> | <span style="color: var(--neon-purple);">VERSION 2.0</span></p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- particles.js script -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update year
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Setup payment method
+            const setupPaymentMethod = (amountsId, inputId, hiddenInputId) => {
+                const amountButtons = document.querySelectorAll(`#${amountsId} .amount-btn`);
+                const customInput = document.getElementById(inputId);
+                const hiddenInput = document.getElementById(hiddenInputId);
+
+                // Select first button by default
+                if (amountButtons.length > 0) {
+                    amountButtons[0].classList.add('selected');
+                    if (hiddenInput) hiddenInput.value = amountButtons[0].getAttribute('data-amount');
+                }
+
+                amountButtons.forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const amount = button.getAttribute('data-amount');
+                        
+                        amountButtons.forEach(btn => btn.classList.remove('selected'));
+                        button.classList.add('selected');
+                        
+                        customInput.value = amount;
+                        if (hiddenInput) hiddenInput.value = amount;
+                    });
+                });
+
+                customInput.addEventListener('input', () => {
+                    const amount = customInput.value;
+                    
+                    if (amount && amount > 0) {
+                        amountButtons.forEach(btn => btn.classList.remove('selected'));
+                        if (hiddenInput) hiddenInput.value = amount;
+                    }
+                });
+            };
+
+            // Setup PayPal
+            setupPaymentMethod('paypal-amounts', 'paypal-custom-amount', 'paypal-amount');
+            
+            // Confetti effect when submitting form
+            document.getElementById('paypal-form').addEventListener('submit', function() {
+                createConfetti();
+            });
+            
+            function createConfetti() {
+                const colors = ['#6c5ce7', '#a29bfe', '#fd79a8', '#00b894', '#fdcb6e'];
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = Math.random() * 10 + 5 + 'px';
+                    confetti.style.animationDuration = Math.random() * 3 + 2 + 's';
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    // Remove confetti after animation
+                    setTimeout(() => {
+                        confetti.remove();
+                    }, 5000);
+                }
+            }
+            
+            // Initialize particles with improved configuration
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 100,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": ["#6c5ce7", "#a29bfe", "#fd79a8", "#00b894"]
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.7,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 4,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 4,
+                            "size_min": 0.3,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#6c5ce7",
+                        "opacity": 0.4,
+                        "width": 1.5
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 3,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": true,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "bubble"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 200,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 250,
+                            "size": 10,
+                            "duration": 2,
+                            "opacity": 0.8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 120,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+    </script>
+</body>
+</html>

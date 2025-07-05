@@ -1,0 +1,24 @@
+name: Deploy with Secrets
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Replace secrets in HTML
+      run: |
+        # Asegúrate que la ruta sea correcta
+        sed -i "s/TU_EMAIL_DE_PAYPAL/${{ secrets.PAYPAL_EMAIL }}/g" Donación/Donación.html
+        sed -i "s/TU_MP_PUBLIC_KEY/${{ secrets.MP_PUBLIC_KEY }}/g" Donación/Donación.html
+        
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        keep_files: true

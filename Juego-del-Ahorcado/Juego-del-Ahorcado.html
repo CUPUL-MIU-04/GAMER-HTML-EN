@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>🔥 Epic Hangman 🔥</title>
+    <style>
+        /* GENERAL STYLES */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Press+Start+2P&display=swap');
+        
+        body {
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            margin: 0;
+            padding: 10px;
+            overflow-x: hidden;
+            color: white;
+            min-height: 100vh;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* PARTICLE EFFECT */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: transparent;
+        }
+        
+        /* GAME CONTAINER - NOW SMALLER AND RESPONSIVE */
+        .game-container {
+            background: rgba(15, 12, 41, 0.85);
+            border-radius: 12px;
+            padding: 15px;
+            width: 95%;
+            max-width: 500px;
+            margin: 15px auto;
+            box-shadow: 0 0 20px rgba(100, 149, 237, 0.6);
+            position: relative;
+            backdrop-filter: blur(8px);
+            border: 2px solid #6495ed;
+            transform: scale(0.95);
+            transition: all 0.3s ease;
+            animation: pulseGlow 3s infinite alternate;
+        }
+        
+        /* MOBILE ADJUSTMENTS */
+        @media (max-width: 600px) {
+            .game-container {
+                padding: 12px;
+                width: 92%;
+                margin: 10px auto;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+                margin-bottom: 10px;
+            }
+            
+            #word-display {
+                font-size: 1.8em;
+                letter-spacing: 8px;
+                margin: 15px 0;
+            }
+            
+            .letter-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1.1em;
+            }
+            
+            #hangman-drawing {
+                font-size: 1.1em;
+                min-height: 150px;
+            }
+            
+            #reset-btn, #next-level-btn {
+                padding: 10px 18px;
+                font-size: 0.9em;
+            }
+        }
+        
+        /* TITLE WITH NEON EFFECT */
+        h1 {
+            color: #fff;
+            text-shadow: 
+                0 0 10px #fff,
+                0 0 20px #fff,
+                0 0 30px #6495ed,
+                0 0 40px #6495ed;
+            font-size: 2.2em;
+            margin: 5px 0 15px;
+            letter-spacing: 2px;
+            animation: neonGlow 1.5s infinite alternate;
+        }
+        
+        /* WORD TO GUESS */
+        #word-display {
+            font-size: 2em;
+            letter-spacing: 10px;
+            margin: 20px 0;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(100, 149, 237, 0.8);
+            min-height: 50px;
+            font-family: 'Press Start 2P', cursive;
+            word-break: break-all;
+        }
+        
+        /* HANGMAN DRAWING */
+        #hangman-drawing {
+            font-family: monospace;
+            white-space: pre;
+            font-size: 1.2em;
+            color: #fff;
+            text-shadow: 0 0 5px #e74c3c;
+            min-height: 160px;
+            margin: 15px 0;
+            line-height: 1.4;
+        }
+        
+        /* RESPONSIVE KEYBOARD */
+        #keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin: 15px 0;
+        }
+        
+        .letter-btn {
+            width: 38px;
+            height: 38px;
+            font-size: 1.1em;
+            background: rgba(52, 152, 219, 0.3);
+            color: white;
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+        }
+        
+        .letter-btn:hover {
+            background: rgba(41, 128, 185, 0.7);
+            transform: translateY(-2px);
+            box-shadow: 0 0 12px rgba(41, 128, 185, 0.8);
+        }
+        
+        .letter-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        /* SMALLER BUTTONS */
+        #reset-btn, #next-level-btn {
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            margin: 8px;
+            transition: all 0.2s;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+        }
+        
+        #next-level-btn {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            display: none;
+            box-shadow: 0 0 12px rgba(46, 204, 113, 0.6);
+        }
+        
+        #next-level-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.8);
+        }
+        
+        #reset-btn {
+            background: linear-gradient(45deg, #e74c3c, #c0392b);
+            box-shadow: 0 0 12px rgba(231, 76, 60, 0.6);
+        }
+        
+        #reset-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(231, 76, 60, 0.8);
+        }
+        
+        /* MESSAGES */
+        #message {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 10px 0;
+            min-height: 25px;
+            text-shadow: 0 0 4px currentColor;
+        }
+        
+        .win-message {
+            color: #2ecc71 !important;
+            animation: pulse 0.5s infinite alternate;
+        }
+        
+        .lose-message {
+            color: #e74c3c !important;
+            animation: shake 0.5s;
+        }
+        
+        /* VICTORY SCREEN */
+        .level-complete {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 12, 41, 0.95);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .level-complete.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .level-complete h2 {
+            font-size: 2.2em;
+            color: #fff;
+            text-shadow: 
+                0 0 8px #fff,
+                0 0 16px #fff,
+                0 0 24px #2ecc71,
+                0 0 32px #2ecc71;
+            margin-bottom: 15px;
+            animation: neonGlow 1.5s infinite alternate;
+        }
+        
+        .level-complete p {
+            font-size: 1.3em;
+            color: #fff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+            text-align: center;
+        }
+        
+        .continue-btn {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #3498db, #6495ed);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.7);
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .continue-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(52, 152, 219, 0.9);
+        }
+        
+        /* ANIMATIONS */
+        @keyframes neonGlow {
+            from {
+                text-shadow: 
+                    0 0 5px #fff,
+                    0 0 10px #fff,
+                    0 0 15px #6495ed,
+                    0 0 20px #6495ed;
+            }
+            to {
+                text-shadow: 
+                    0 0 10px #fff,
+                    0 0 20px #fff,
+                    0 0 30px #6495ed,
+                    0 0 40px #6495ed;
+            }
+        }
+        
+        @keyframes pulseGlow {
+            from {
+                box-shadow: 0 0 15px rgba(100, 149, 237, 0.6);
+            }
+            to {
+                box-shadow: 0 0 25px rgba(100, 149, 237, 0.9);
+            }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        /* CREDITS */
+        .credits {
+            position: fixed;
+            bottom: 5px;
+            right: 5px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            font-style: italic;
+            z-index: 10;
+        }
+        
+        /* LEVEL DISPLAY */
+        #level-display {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(52, 152, 219, 0.6);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+        
+        /* AD CONTAINER */
+        #ad-container {
+            background-color: rgba(249, 249, 249, 0.1);
+            border: 1px dashed rgba(204, 204, 204, 0.3);
+            padding: 8px;
+            margin: 15px auto;
+            max-width: 100%;
+            border-radius: 5px;
+            position: relative;
+            font-size: 0.8em;
+        }
+        
+        #ad-content {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        #ad-block-message {
+            color: #e74c3c;
+            font-weight: bold;
+            display: none;
+            padding: 8px;
+            background-color: rgba(255, 235, 238, 0.1);
+            border-radius: 4px;
+        }
+        
+        #whitelist-btn {
+            background-color: rgba(76, 175, 80, 0.6);
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 0.8em;
+            transition: all 0.2s;
+        }
+        
+        #whitelist-btn:hover {
+            background-color: rgba(69, 160, 73, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- PARTICLE EFFECT -->
+    <div id="particles-js"></div>
+    
+    <!-- VICTORY SCREEN -->
+    <div class="level-complete" id="levelComplete">
+        <h2>LEVEL COMPLETED!</h2>
+        <p>Preparing next level...</p>
+        <button class="continue-btn" id="continueBtn">CONTINUE</button>
+    </div>
+    
+    <!-- MAIN CONTAINER - NOW SMALLER -->
+    <div class="game-container" id="gameContainer">
+        <div id="level-display">Level: 1 - Easy</div>
+        <h1>🔥 EPIC HANGMAN 🔥</h1>
+        
+        <div id="ad-container">
+            <div id="ad-content">
+                <p>Advertisement: This game is maintained thanks to ads.</p>
+                <p>Your support helps continue development!</p>
+            </div>
+            <div id="ad-block-message">
+                <p>We've detected an ad blocker.</p>
+                <button id="whitelist-btn" onclick="showAdOverlay()">How to disable AdBlock?</button>
+            </div>
+        </div>
+        
+        <div id="hangman-drawing"></div>
+        <div id="word-display"></div>
+        <div id="message"></div>
+        <div id="keyboard"></div>
+        <button id="next-level-btn" onclick="nextLevel()">NEXT</button>
+        <button id="reset-btn" onclick="resetGame()">RESTART</button>
+    </div>
+    
+    <div class="credits">Created by Luis04 / Version 5.1</div>
+
+    <!-- AUDIO (SOUND EFFECTS) -->
+    <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
+    <audio id="loseSound" src="https://assets.mixkit.co/sfx/preview/mixkit-retro-arcade-lose-2027.mp3" preload="auto"></audio>
+    <audio id="keySound" src="https://assets.mixkit.co/sfx/preview/mixkit-quick-jump-arcade-game-239.mp3" preload="auto"></audio>
+    <audio id="bgMusic" loop src="https://assets.mixkit.co/music/preview/mixkit-epic-action-bleeps-156.mp3" preload="auto"></audio>
+    
+    <!-- PARTICLE SCRIPT -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // GAME CONFIGURATION
+        const wordsByLevel = [
+            ["SUN", "MOON", "CAT", "DOG", "HOME", "WATER"], // Level 1 - Easy
+            ["GARDEN", "COMPUTER", "PHONE", "WINDOW", "SCHOOL", "BOOK"], // Level 2
+            ["PROGRAMMING", "HANGMAN", "JAVASCRIPT", "ELECTRICITY", "UNIVERSITY"], // Level 3
+            ["DEOXYRIBONUCLEIC", "PARALLELEPIPED", "ELECTROENCEPHALOGRAPH", "OTORHINOLARYNGOLOGY"], // Level 4 - Hard
+            ["SUPERCALIFRAGILISTICEXPIALIDOCIOUS", "ANTIDISESTABLISHMENTARIANISM", "ELECTROENCEPHALOGRAM"] // Level 5 - Extreme
+        ];
+        
+        const levelNames = [
+            "Easy", "Intermediate", "Advanced", "Hard", "Extreme"
+        ];
+        
+        let currentLevel = 0;
+        let selectedWord = "";
+        let guessedLetters = [];
+        let mistakes = 0;
+        let maxMistakes = 6;
+        let gameActive = true;
+        
+        // INITIALIZE PARTICLES
+        function initParticles() {
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": { 
+                        "value": window.innerWidth < 600 ? 60 : 80,
+                        "density": { "enable": true, "value_area": 800 } 
+                    },
+                    "color": { "value": "#6495ed" },
+                    "shape": { "type": "circle" },
+                    "opacity": { "value": 0.6, "random": true },
+                    "size": { "value": window.innerWidth < 600 ? 3 : 4, "random": true },
+                    "line_linked": { 
+                        "enable": true, 
+                        "distance": window.innerWidth < 600 ? 120 : 150, 
+                        "color": "#6495ed", 
+                        "opacity": 0.4, 
+                        "width": 1 
+                    },
+                    "move": { 
+                        "enable": true, 
+                        "speed": window.innerWidth < 600 ? 2 : 3, 
+                        "direction": "none", 
+                        "random": true 
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": { 
+                            "enable": true, 
+                            "mode": window.innerWidth < 600 ? "bubble" : "repulse" 
+                        },
+                        "onclick": { 
+                            "enable": true, 
+                            "mode": "push" 
+                        }
+                    }
+                }
+            });
+        }
+        
+        // INITIALIZE GAME
+        function initGame() {
+            gameActive = true;
+            selectedWord = wordsByLevel[currentLevel][Math.floor(Math.random() * wordsByLevel[currentLevel].length)].toUpperCase();
+            guessedLetters = [];
+            mistakes = 0;
+            maxMistakes = 6 - Math.floor(currentLevel / 2);
+            
+            document.getElementById("hangman-drawing").textContent = getHangmanDrawing(0);
+            document.getElementById("message").textContent = "";
+            document.getElementById("message").className = "";
+            document.getElementById("next-level-btn").style.display = "none";
+            document.getElementById("reset-btn").style.display = "none";
+            document.getElementById("level-display").textContent = `Level ${currentLevel + 1}: ${levelNames[currentLevel]}`;
+            
+            updateWordDisplay();
+            createKeyboard();
+            playBackgroundMusic();
+            
+            // Entrance effect
+            document.getElementById("gameContainer").style.animation = "pulse 0.5s";
+        }
+
+        // UPDATE WORD
+        function updateWordDisplay() {
+            let displayText = "";
+            for (const letter of selectedWord) {
+                displayText += guessedLetters.includes(letter) ? letter + " " : "_ ";
+            }
+            document.getElementById("word-display").textContent = displayText.trim();
+            
+            // CHECK IF WON
+            if (!displayText.includes("_")) {
+                gameActive = false;
+                document.getElementById("message").textContent = "VICTORY!";
+                document.getElementById("message").classList.add("win-message");
+                document.getElementById("next-level-btn").style.display = "inline-block";
+                playWinSound();
+                showLevelComplete();
+            }
+        }
+        
+        // SHOW VICTORY SCREEN
+        function showLevelComplete() {
+            if (currentLevel >= wordsByLevel.length - 1) {
+                document.getElementById("message").textContent = "YOU'VE COMPLETED ALL LEVELS!";
+                document.getElementById("reset-btn").style.display = "inline-block";
+                triggerConfetti();
+                return;
+            }
+            
+            const levelComplete = document.getElementById("levelComplete");
+            levelComplete.classList.add("show");
+            
+            // CONFETTI EFFECT
+            triggerConfetti();
+        }
+        
+        // CONFETTI EFFECT
+        function triggerConfetti() {
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": { "value": window.innerWidth < 600 ? 100 : 150 },
+                    "color": { "value": ["#6495ed", "#2ecc71", "#e74c3c", "#f1c40f", "#9b59b6"] },
+                    "shape": { "type": "circle" },
+                    "opacity": { "value": 1 },
+                    "size": { "value": window.innerWidth < 600 ? 6 : 8, "random": true },
+                    "line_linked": { "enable": false },
+                    "move": { 
+                        "enable": true, 
+                        "speed": window.innerWidth < 600 ? 12 : 15, 
+                        "direction": "bottom", 
+                        "random": true 
+                    }
+                }
+            });
+            
+            setTimeout(initParticles, 3000);
+        }
+        
+        // HANDLE GUESSED LETTER
+        function handleGuess(letter) {
+            if (!gameActive || guessedLetters.includes(letter)) return;
+            
+            guessedLetters.push(letter);
+            playKeySound();
+            
+            const buttons = document.querySelectorAll(".letter-btn");
+            buttons.forEach(btn => {
+                if (btn.textContent === letter) {
+                    btn.disabled = true;
+                    
+                    if (!selectedWord.includes(letter)) {
+                        btn.style.background = "linear-gradient(45deg, #e74c3c, #c0392b)";
+                        mistakes++;
+                        document.getElementById("hangman-drawing").textContent = getHangmanDrawing(mistakes);
+                        btn.style.animation = "shake 0.5s";
+                    } else {
+                        btn.style.background = "linear-gradient(45deg, #2ecc71, #27ae60)";
+                        btn.style.animation = "bounce 0.5s";
+                    }
+                }
+            });
+            
+            updateWordDisplay();
+            
+            // CHECK IF LOST
+            if (mistakes >= maxMistakes) {
+                gameActive = false;
+                document.getElementById("message").textContent = "YOU LOST! The word was: " + selectedWord;
+                document.getElementById("message").classList.add("lose-message");
+                document.getElementById("reset-btn").style.display = "inline-block";
+                playLoseSound();
+                document.getElementById("gameContainer").style.animation = "shake 0.8s";
+            }
+        }
+        
+        // DRAW HANGMAN
+        function getHangmanDrawing(step) {
+            const drawings = [
+                `  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========`,
+                `  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========`,
+                `  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========`,
+                `  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========`,
+                `  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========`,
+                `  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========`,
+                `  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n=========`
+            ];
+            return drawings[Math.min(step, drawings.length - 1)];
+        }
+        
+        // CREATE RESPONSIVE KEYBOARD
+        function createKeyboard() {
+            const keyboard = document.getElementById("keyboard");
+            keyboard.innerHTML = "";
+            
+            // For mobile, reduce letters per row
+            const lettersPerRow = window.innerWidth < 600 ? 8 : 13;
+            let currentRow = document.createElement("div");
+            currentRow.style.display = "flex";
+            currentRow.style.justifyContent = "center";
+            currentRow.style.flexWrap = "wrap";
+            currentRow.style.gap = "6px";
+            currentRow.style.marginBottom = "6px";
+            
+            for (let i = 65; i <= 90; i++) {
+                const letter = String.fromCharCode(i);
+                const button = document.createElement("button");
+                button.textContent = letter;
+                button.className = "letter-btn";
+                button.onclick = () => handleGuess(letter);
+                
+                currentRow.appendChild(button);
+                
+                // Create new row every lettersPerRow letters
+                if ((i - 64) % lettersPerRow === 0 && i !== 90) {
+                    keyboard.appendChild(currentRow);
+                    currentRow = document.createElement("div");
+                    currentRow.style.display = "flex";
+                    currentRow.style.justifyContent = "center";
+                    currentRow.style.flexWrap = "wrap";
+                    currentRow.style.gap = "6px";
+                    currentRow.style.marginBottom = "6px";
+                }
+            }
+            
+            keyboard.appendChild(currentRow);
+        }
+        
+        // NEXT LEVEL
+        function nextLevel() {
+            currentLevel++;
+            initGame();
+            document.getElementById("levelComplete").classList.remove("show");
+        }
+        
+        // RESET GAME
+        function resetGame() {
+            currentLevel = 0;
+            initGame();
+        }
+        
+        // SOUNDS
+        function playWinSound() {
+            const sound = document.getElementById("winSound");
+            sound.volume = window.innerWidth < 600 ? 0.5 : 0.7;
+            sound.play();
+        }
+        
+        function playLoseSound() {
+            const sound = document.getElementById("loseSound");
+            sound.volume = window.innerWidth < 600 ? 0.4 : 0.6;
+            sound.play();
+        }
+        
+        function playKeySound() {
+            const sound = document.getElementById("keySound");
+            sound.volume = window.innerWidth < 600 ? 0.2 : 0.3;
+            sound.currentTime = 0;
+            sound.play();
+        }
+        
+        function playBackgroundMusic() {
+            const bgMusic = document.getElementById("bgMusic");
+            bgMusic.volume = window.innerWidth < 600 ? 0.1 : 0.2;
+            bgMusic.play().catch(e => console.log("Auto-play blocked: " + e));
+        }
+        
+        // ADBLOCK DETECTION
+        function checkAdBlock() {
+            const fakeAd = document.createElement('div');
+            fakeAd.className = 'advertisement';
+            fakeAd.style.height = '1px';
+            fakeAd.style.width = '1px';
+            fakeAd.style.position = 'absolute';
+            fakeAd.style.left = '-100px';
+            fakeAd.style.top = '-100px';
+            fakeAd.innerHTML = '&nbsp;<ins class="adsbygoogle"></ins>&nbsp;';
+            document.body.appendChild(fakeAd);
+            
+            setTimeout(() => {
+                let isBlocked = false;
+                if (!fakeAd.offsetHeight || !fakeAd.offsetWidth || 
+                    fakeAd.offsetHeight === 0 || fakeAd.offsetWidth === 0 ||
+                    fakeAd.style.display === 'none' || 
+                    getComputedStyle(fakeAd).display === 'none') {
+                    isBlocked = true;
+                }
+                if (fakeAd.innerHTML.indexOf('adsbygoogle') === -1) {
+                    isBlocked = true;
+                }
+                if (isBlocked) {
+                    document.getElementById('ad-content').style.display = 'none';
+                    document.getElementById('ad-block-message').style.display = 'block';
+                }
+                document.body.removeChild(fakeAd);
+            }, 100);
+        }
+
+        function showAdOverlay() {
+            document.getElementById('adOverlay').style.display = 'flex';
+        }
+
+        function closeAdOverlay() {
+            document.getElementById('adOverlay').style.display = 'none';
+        }
+        
+        // INITIALIZE ON LOAD
+        window.onload = function() {
+            initParticles();
+            initGame();
+            checkAdBlock();
+            
+            // KEYBOARD EVENT
+            document.addEventListener("keydown", (e) => {
+                if (gameActive && e.keyCode >= 65 && e.keyCode <= 90) {
+                    handleGuess(String.fromCharCode(e.keyCode));
+                }
+            });
+            
+            // CONTINUE BUTTON
+            document.getElementById("continueBtn").addEventListener("click", nextLevel);
+            
+            // ADJUST ON SCREEN RESIZE
+            window.addEventListener("resize", function() {
+                createKeyboard();
+                initParticles();
+            });
+        };
+    </script>
+</body>
+</html>

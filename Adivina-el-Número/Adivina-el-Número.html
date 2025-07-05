@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Number</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        /* Particle canvas */
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        h1 {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        
+        .game-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        input {
+            padding: 10px;
+            font-size: 16px;
+            width: 60px;
+            text-align: center;
+            margin: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 5px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background: linear-gradient(45deg, #4CAF50, #2ECC71);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background: linear-gradient(45deg, #45a049, #27ae60);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        #message {
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 18px;
+            color: #f39c12;
+            text-shadow: 0 0 5px rgba(243, 156, 18, 0.5);
+        }
+        
+        #attempts {
+            color: #bdc3c7;
+        }
+        
+        .credits {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            font-style: italic;
+        }
+        
+        /* Anti-adblock styles */
+        #adblock-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #adblock-alert {
+            background-color: rgba(30, 30, 30, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid #f39c12;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+        }
+        
+        #adblock-alert h2 {
+            color: #f39c12;
+            margin-top: 0;
+        }
+        
+        #adblock-alert p {
+            color: #ecf0f1;
+        }
+        
+        #adblock-alert button {
+            background: linear-gradient(45deg, #f39c12, #e67e22);
+        }
+        
+        #adblock-alert button:hover {
+            background: linear-gradient(45deg, #e67e22, #d35400);
+        }
+        
+        .blur-content {
+            filter: blur(5px);
+            pointer-events: none;
+        }
+        
+        /* Title glow animation */
+        @keyframes glow {
+            0% { text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+            50% { text-shadow: 0 0 20px rgba(255,255,255,0.8); }
+            100% { text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        }
+        
+        h1 {
+            animation: glow 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Particle canvas -->
+    <div id="particles-js"></div>
+    
+    <!-- Adblock overlay -->
+    <div id="adblock-overlay">
+        <div id="adblock-alert">
+            <h2>AdBlock Detected!</h2>
+            <p>We've detected that you're using an ad blocker.</p>
+            <p>To support our site and continue playing, please:</p>
+            <ol style="text-align: left; display: inline-block; margin: 10px auto; color: #ecf0f1;">
+                <li>Disable your AdBlock</li>
+                <li>Or add our site to your whitelist</li>
+            </ol>
+            <button id="recheck-btn">I've disabled it</button>
+        </div>
+    </div>
+
+    <div id="game-content" class="game-container">
+        <h1>Guess the Number</h1>
+        <p>Enter a number between 1 and 100:</p>
+        <input type="number" id="guessInput" min="1" max="100">
+        <button onclick="checkGuess()">Guess</button>
+        <div id="message"></div>
+        <div id="attempts">Attempts: 0</div>
+    </div>
+    
+    <div class="credits">Created by Luis04 / Version 2.5.5</div>
+
+    <!-- Particles library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    
+    <script>
+        // ===== PARTICLE CONFIGURATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": ["#4CAF50", "#2ECC71", "#3498db", "#9b59b6", "#f1c40f", "#e74c3c"]
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                        "polygon": {
+                            "nb_sides": 5
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.6,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 2,
+                            "size_min": 0.1,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.4,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 3,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": true,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+
+        // ===== ANTI-ADBLOCK =====
+        function detectAdBlock() {
+            return new Promise((resolve) => {
+                // Method 1: Try to load an ad script
+                const adScript = document.createElement('script');
+                adScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+                adScript.onerror = () => resolve(true);
+                document.head.appendChild(adScript);
+                setTimeout(() => document.head.removeChild(adScript), 200);
+                
+                // Method 2: Create an element with ad classes
+                const testAd = document.createElement('div');
+                testAd.innerHTML = '&nbsp;';
+                testAd.className = 'adsbox pub_300x250 pub_300x250m pub_728x90 text-ad textAd text_ad text_ads text-ads';
+                testAd.style.position = 'absolute';
+                testAd.style.left = '-9999px';
+                document.body.appendChild(testAd);
+                
+                setTimeout(() => {
+                    if(testAd.offsetHeight === 0 || window.getComputedStyle(testAd).display === 'none') {
+                        document.body.removeChild(testAd);
+                        resolve(true);
+                    } else {
+                        document.body.removeChild(testAd);
+                        // Method 3: Check if fetch is blocked
+                        fetch('https://www.google-analytics.com/analytics.js', {
+                            method: 'HEAD',
+                            mode: 'no-cors'
+                        }).catch(() => resolve(true));
+                        
+                        // If everything passes, no adblock
+                        setTimeout(() => resolve(false), 300);
+                    }
+                }, 100);
+            });
+        }
+        
+        async function checkAdBlock() {
+            const isAdBlockActive = await detectAdBlock();
+            if(isAdBlockActive) {
+                document.getElementById('adblock-overlay').style.display = 'flex';
+                document.getElementById('game-content').classList.add('blur-content');
+            } else {
+                document.getElementById('adblock-overlay').style.display = 'none';
+                document.getElementById('game-content').classList.remove('blur-content');
+            }
+            return isAdBlockActive;
+        }
+        
+        // Check periodically
+        document.getElementById('recheck-btn').addEventListener('click', () => {
+            checkAdBlock();
+        });
+        
+        // Check on load and every 30 seconds
+        window.addEventListener('load', () => {
+            checkAdBlock();
+            setInterval(checkAdBlock, 30000);
+        });
+        
+        // ===== GAME =====
+        let randomNumber = Math.floor(Math.random() * 100) + 1;
+        let attempts = 0;
+
+        function checkGuess() {
+            const guessInput = document.getElementById('guessInput');
+            const message = document.getElementById('message');
+            const attemptsDisplay = document.getElementById('attempts');
+            const guess = parseInt(guessInput.value);
+
+            if (isNaN(guess) || guess < 1 || guess > 100) {
+                message.textContent = "Please enter a valid number between 1 and 100!";
+                return;
+            }
+
+            attempts++;
+            attemptsDisplay.textContent = `Attempts: ${attempts}`;
+
+            if (guess === randomNumber) {
+                message.textContent = `Congratulations! You guessed the number ${randomNumber} in ${attempts} attempts.`;
+                message.style.color = "#2ecc71";
+                guessInput.disabled = true;
+                
+                // Special winning effect
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": {
+                            "value": 150,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": ["#2ecc71", "#27ae60", "#1abc9c"]
+                        },
+                        "shape": {
+                            "type": "circle"
+                        },
+                        "opacity": {
+                            "value": 0.8,
+                            "random": true
+                        },
+                        "size": {
+                            "value": 5,
+                            "random": true
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 100,
+                            "color": "#2ecc71",
+                            "opacity": 0.6,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 6,
+                            "direction": "none",
+                            "random": true,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": true,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": true,
+                                "mode": "repulse"
+                            },
+                            "onclick": {
+                                "enable": true,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "repulse": {
+                                "distance": 100,
+                                "duration": 0.4
+                            },
+                            "push": {
+                                "particles_nb": 8
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                });
+            } else if (guess < randomNumber) {
+                message.textContent = "The number is higher. Keep trying!";
+                message.style.color = "#f39c12";
+            } else {
+                message.textContent = "The number is lower. Keep trying!";
+                message.style.color = "#f39c12";
+            }
+
+            guessInput.value = '';
+            guessInput.focus();
+        }
+        
+        // Allow using Enter key to guess
+        document.getElementById('guessInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkGuess();
+            }
+        });
+    </script>
+</body>
+</html>
