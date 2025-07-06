@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adivina el vaso con la canica - 10 Vidas</title>
+    <title>Guess the Cup with the Marble - 10 Lives</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -148,43 +148,43 @@
 </head>
 <body>
     <div class="game-container">
-        <h1>Adivina en qué vaso está la canica</h1>
+        <h1>Guess Which Cup Has the Marble</h1>
         
         <div class="instructions">
-            <p>¡Tienes 10 vidas! Adivina dónde está la canica para ganar puntos. Cada nivel aumenta la dificultad.</p>
-            <p>Haz clic en "Revolver vasos" para mezclarlos antes de adivinar.</p>
+            <p>You have 10 lives! Guess where the marble is to earn points. Each level increases the difficulty.</p>
+            <p>Click "Shuffle Cups" to mix them before guessing.</p>
         </div>
         
         <div class="stats">
-            <div class="stat">Nivel: <span id="level">1</span></div>
-            <div class="stat">Puntos: <span id="points">0</span></div>
-            <div class="stat">Vidas: <span id="lives-container"></span></div>
-            <div class="stat">Tiempo: <span id="time">30</span>s</div>
-            <div class="stat">Vasos: <span id="cup-count">3</span></div>
+            <div class="stat">Level: <span id="level">1</span></div>
+            <div class="stat">Points: <span id="points">0</span></div>
+            <div class="stat">Lives: <span id="lives-container"></span></div>
+            <div class="stat">Time: <span id="time">30</span>s</div>
+            <div class="stat">Cups: <span id="cup-count">3</span></div>
         </div>
         
         <div class="cups-container" id="cups-container"></div>
         
         <div class="result" id="result"></div>
         
-        <button id="start-btn" onclick="startGame()">Nuevo Juego</button>
-        <button id="shuffle-btn" onclick="shuffleCups()" disabled>Revolver vasos</button>
+        <button id="start-btn" onclick="startGame()">New Game</button>
+        <button id="shuffle-btn" onclick="shuffleCups()" disabled>Shuffle Cups</button>
     </div>
 
     <div class="celebration" id="celebration"></div>
 
     <script>
-        // Variables del juego
+        // Game variables
         let marblePosition;
         let level = 1;
         let points = 0;
-        let lives = 10; // 10 vidas ahora
+        let lives = 10; // 10 lives now
         let timeLeft = 30;
         let timer;
         let isShuffling = false;
         let cupCount = 3;
         
-        // Elementos del DOM
+        // DOM elements
         const cupsContainer = document.getElementById('cups-container');
         const resultElement = document.getElementById('result');
         const levelElement = document.getElementById('level');
@@ -196,14 +196,14 @@
         const shuffleBtn = document.getElementById('shuffle-btn');
         const celebrationElement = document.getElementById('celebration');
         
-        // Inicializar el juego
+        // Initialize game
         function initGame() {
             createParticles();
             updateLives();
             createCups();
         }
         
-        // Crear vasos
+        // Create cups
         function createCups() {
             cupsContainer.innerHTML = '';
             for (let i = 0; i < cupCount; i++) {
@@ -220,9 +220,9 @@
             cupCountElement.textContent = cupCount;
         }
         
-        // Iniciar nuevo juego
+        // Start new game
         function startGame() {
-            // Resetear variables si es nuevo juego
+            // Reset variables if it's a new game
             if (lives <= 0) {
                 level = 1;
                 points = 0;
@@ -231,24 +231,24 @@
                 updateLives();
             }
             
-            // Configurar nivel
+            // Set up level
             levelElement.textContent = level;
             pointsElement.textContent = points;
             timeLeft = 30 + (level * 5);
             timeElement.textContent = timeLeft;
             
-            // Crear vasos
+            // Create cups
             createCups();
             
-            // Elegir posición aleatoria para la canica
+            // Choose random position for the marble
             marblePosition = Math.floor(Math.random() * cupCount);
-            console.log("Canica en vaso:", marblePosition); // Para debug
+            console.log("Marble in cup:", marblePosition); // For debug
             
-            // Habilitar botones
+            // Enable buttons
             shuffleBtn.disabled = false;
             startBtn.disabled = true;
             
-            // Iniciar temporizador
+            // Start timer
             clearInterval(timer);
             timer = setInterval(updateTimer, 1000);
             
@@ -256,22 +256,22 @@
             resultElement.style.color = '';
         }
         
-        // Revolver vasos
+        // Shuffle cups
         function shuffleCups() {
             if (isShuffling) return;
             
             isShuffling = true;
             shuffleBtn.disabled = true;
-            resultElement.textContent = 'Revolviendo...';
+            resultElement.textContent = 'Shuffling...';
             
             const cups = document.querySelectorAll('.cup');
-            const shuffleDuration = 2000; // 2 segundos
+            const shuffleDuration = 2000; // 2 seconds
             const startTime = Date.now();
             
-            // Ocultar canica durante el shuffle
+            // Hide marble during shuffle
             cups[marblePosition].querySelector('.marble').style.display = 'none';
             
-            // Animación de shuffle
+            // Shuffle animation
             function animateShuffle() {
                 const elapsed = Date.now() - startTime;
                 const progress = elapsed / shuffleDuration;
@@ -281,13 +281,13 @@
                     cups.forEach(cup => {
                         cup.style.transform = '';
                     });
-                    // Cambiar posición de la canica después del shuffle para mayor dificultad
+                    // Change marble position after shuffle for increased difficulty
                     marblePosition = Math.floor(Math.random() * cupCount);
-                    console.log("Nueva posición después de shuffle:", marblePosition);
+                    console.log("New position after shuffle:", marblePosition);
                     return;
                 }
                 
-                // Mover vasos en patrones circulares
+                // Move cups in circular patterns
                 cups.forEach((cup, index) => {
                     const angle = progress * (2 * Math.PI) * 3 + (index * (2 * Math.PI / cupCount));
                     const radius = 100;
@@ -303,49 +303,49 @@
             animateShuffle();
         }
         
-        // Verificar selección del jugador
+        // Check player's selection
         function checkCup(selectedIndex) {
             if (isShuffling) return;
             
             clearInterval(timer);
             const cups = document.querySelectorAll('.cup');
             
-            // Mostrar canica
+            // Show marble
             cups[marblePosition].querySelector('.marble').style.display = 'block';
             
             if (selectedIndex === marblePosition) {
-                // Ganó
-                resultElement.textContent = `¡Correcto! +${level * 10} puntos`;
+                // Won
+                resultElement.textContent = `Correct! +${level * 10} points`;
                 resultElement.style.color = '#4CAF50';
                 points += level * 10;
                 pointsElement.textContent = points;
                 
-                // Animación de celebración
+                // Celebration animation
                 createConfetti();
                 
-                // Subir de nivel
+                // Level up
                 level++;
                 levelElement.textContent = level;
                 
-                // Aumentar dificultad
+                // Increase difficulty
                 if (level % 2 === 0 && cupCount < 7) {
                     cupCount++;
                 }
                 
-                // Pequeña animación de celebración
+                // Small celebration animation
                 cups[marblePosition].style.transform = 'translateY(-20px)';
                 setTimeout(() => {
                     cups[marblePosition].style.transform = '';
                     startGame();
                 }, 2000);
             } else {
-                // Perdió
-                resultElement.textContent = '¡Incorrecto! Perdiste una vida.';
+                // Lost
+                resultElement.textContent = 'Incorrect! You lost a life.';
                 resultElement.style.color = '#FF0000';
                 lives--;
                 updateLives();
                 
-                // Animación de error
+                // Error animation
                 cups[selectedIndex].style.transform = 'rotate(10deg)';
                 setTimeout(() => {
                     cups[selectedIndex].style.transform = 'rotate(-10deg)';
@@ -355,8 +355,8 @@
                         if (lives > 0) {
                             startGame();
                         } else {
-                            resultElement.textContent = '¡Juego terminado! Puntuación final: ' + points;
-                            startBtn.textContent = 'Jugar de nuevo';
+                            resultElement.textContent = 'Game over! Final score: ' + points;
+                            startBtn.textContent = 'Play Again';
                             startBtn.disabled = false;
                             shuffleBtn.disabled = true;
                         }
@@ -365,14 +365,14 @@
             }
         }
         
-        // Actualizar temporizador
+        // Update timer
         function updateTimer() {
             timeLeft--;
             timeElement.textContent = timeLeft;
             
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                resultElement.textContent = '¡Tiempo agotado! Perdiste una vida.';
+                resultElement.textContent = 'Time\'s up! You lost a life.';
                 resultElement.style.color = '#FF0000';
                 lives--;
                 updateLives();
@@ -380,15 +380,15 @@
                 if (lives > 0) {
                     setTimeout(startGame, 2000);
                 } else {
-                    resultElement.textContent = '¡Juego terminado! Puntuación final: ' + points;
-                    startBtn.textContent = 'Jugar de nuevo';
+                    resultElement.textContent = 'Game over! Final score: ' + points;
+                    startBtn.textContent = 'Play Again';
                     startBtn.disabled = false;
                     shuffleBtn.disabled = true;
                 }
             }
         }
         
-        // Actualizar visualización de vidas
+        // Update lives display
         function updateLives() {
             livesContainer.innerHTML = '';
             for (let i = 0; i < lives; i++) {
@@ -398,7 +398,7 @@
             }
         }
         
-        // Crear partículas en el fondo
+        // Create background particles
         function createParticles() {
             const particleCount = 50;
             
@@ -406,26 +406,26 @@
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 
-                // Tamaño aleatorio
+                // Random size
                 const size = Math.random() * 5 + 1;
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 
-                // Posición aleatoria
+                // Random position
                 particle.style.left = `${Math.random() * 100}vw`;
                 particle.style.top = `${Math.random() * 100}vh`;
                 
-                // Color aleatorio
+                // Random color
                 const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'];
                 particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 
-                // Animación
+                // Animation
                 const duration = Math.random() * 20 + 10;
                 particle.style.animation = `float ${duration}s linear infinite`;
                 
                 document.body.appendChild(particle);
                 
-                // Animación CSS dinámica
+                // Dynamic CSS animation
                 const keyframes = `
                     @keyframes float {
                         0% {
@@ -451,7 +451,7 @@
             }
         }
         
-        // Crear efecto de confeti
+        // Create confetti effect
         function createConfetti() {
             celebrationElement.style.display = 'block';
             celebrationElement.innerHTML = '';
@@ -463,32 +463,32 @@
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 
-                // Posición inicial aleatoria en la parte superior
+                // Random starting position at top
                 confetti.style.left = `${Math.random() * 100}%`;
                 confetti.style.top = '-10px';
                 
-                // Color aleatorio
+                // Random color
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 
-                // Tamaño aleatorio
+                // Random size
                 const size = Math.random() * 10 + 5;
                 confetti.style.width = `${size}px`;
                 confetti.style.height = `${size}px`;
                 
-                // Forma aleatoria (cuadrada o redonda)
+                // Random shape (square or round)
                 if (Math.random() > 0.5) {
                     confetti.style.borderRadius = '50%';
                 } else {
                     confetti.style.borderRadius = '0';
                 }
                 
-                // Animación
+                // Animation
                 const animationDuration = Math.random() * 3 + 2;
                 confetti.style.animation = `fall ${animationDuration}s linear forwards`;
                 
                 celebrationElement.appendChild(confetti);
                 
-                // Definir animación de caída
+                // Define falling animation
                 const keyframes = `
                     @keyframes fall {
                         0% {
@@ -507,13 +507,13 @@
                 document.head.appendChild(style);
             }
             
-            // Ocultar después de la animación
+            // Hide after animation
             setTimeout(() => {
                 celebrationElement.style.display = 'none';
             }, 3000);
         }
         
-        // Iniciar al cargar la página
+        // Initialize on page load
         window.onload = initGame;
     </script>
 </body>
