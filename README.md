@@ -4,57 +4,57 @@
 [![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)](https://developer.mozilla.org/es/docs/Web/CSS)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/es/docs/Web/JavaScript)
 
-**Colección de juegos clásicos** creados con tecnologías web. Perfecta para aprender desarrollo frontend mientras te diviertes.
+**Collection of classic games** created with web technologies. Perfect for learning frontend development while having fun.
 
-![Captura de pantalla del repositorio](https://github.com/CUPUL-MIU-04/GAMER-HTML/blob/master/Snake-Multiplataforma/assets/Snake-Multiplataforma2.png)
+![Repository screenshot](https://github.com/CUPUL-MIU-04/GAMER-HTML/blob/master/Snake-Multiplataforma/assets/Snake-Multiplataforma2.png)
 
-![Captura de pantalla del repositorio](https://github.com/CUPUL-MIU-04/GAMER-HTML/blob/master/Juego-del-Ahorcado/assets/Juego-del-Ahorcado2.png)
+![Repository screenshot](https://github.com/CUPUL-MIU-04/GAMER-HTML/blob/master/Juego-del-Ahorcado/assets/Juego-del-Ahorcado2.png)
 
-![Captura de pantalla del repositorio](https://github.com/CUPUL-MIU-04/GAMER-HTML/blob/master/Adivina-la-Carta/assets/Adivina-la-Carta2.png)
+![Repository screenshot](https://github.com/CUPUL-MIU-04/GAMER-HTML/blob/master/Adivina-la-Carta/assets/Adivina-la-Carta2.png)
 
-![Captura de pantalla del repositorio](https://github.com/CUPUL-MIU-04/GAMER-HTML/blob/master/Adivina-el-N%C3%BAmero/assets/Adivina-el-N%C3%BAmero2.png)
+![Repository screenshot](https://github.com/CUPUL-MIU-04/GAMER-HTML/blob/master/Adivina-el-N%C3%BAmero/assets/Adivina-el-N%C3%BAmero2.png)
 
-Created by **Luis04**  
-Creado por **Luis04**
+Created by **Luis04**
 
-## 🕹️ Juegos Disponibles
+## 🕹️ Available Games
 
-### 🃏 Adivina la Carta
-**Descripción**: Intenta predecir si la próxima carta será mayor o menor.  
-**Cómo jugar**:
-- Haz clic en "Mayor" o "Menor"
-- Acierta consecutivamente para ganar puntos altos
+### 🃏 Guess the Card
+**Description**: Try to predict whether the next card will be higher or lower.  
+**How to play**:
+- Click "Higher" or "Lower"
+- Get consecutive correct guesses to earn high scores
 
-### 🐍 Snake Multiplataforma
-**Descripción**: El clásico juego de la serpiente en versión web.  
-**Controles**:
-- Teclas `↑/↓/←/→` para mover la serpiente
-- Evita chocar con los bordes y tu propia cola
+### 🐍 Cross-Platform Snake
+**Description**: The classic snake game in web version.  
+**Controls**:
+- `↑/↓/←/→` keys to move the snake
+- Avoid hitting the walls and your own tail
 
-### 💀 Juego del Ahorcado
-**Descripción**: Adivina la palabra oculta letra por letra.  
-**Mecánica**:
-- Cada error dibuja parte del ahorcado
-- Tienes 6 intentos para adivinar
+### 💀 Hangman Game
+**Description**: Guess the hidden word letter by letter.  
+**Mechanics**:
+- Each mistake draws part of the hangman
+- You have 6 attempts to guess correctly
 
-### 🔢 Adivina el Número
-**Descripción**: Encuentra el número secreto entre 1 y 100.  
-**Pistas**:
-- El juego indica si tu intento es "mayor" o "menor"
-- Gana con la menor cantidad de intentos
+### 🔢 Guess the Number
+**Description**: Find the secret number between 1 and 100.  
+**Hints**:
+- The game tells if your guess is "higher" or "lower"
+- Win with the fewest attempts possible
 
-## 🛠️ Tecnologías Utilizadas
-- **Frontend**: HTML5 Semántico, CSS3 Moderno, JavaScript ES6
-- **Compatibilidad**: Diseño responsive para móviles y desktop
-- **Extras**: LocalStorage para guardar records
+## 🛠️ Technologies Used
+- **Frontend**: Semantic HTML5, Modern CSS3, JavaScript ES6
+- **Compatibility**: Responsive design for mobile and desktop
+- **Extras**: LocalStorage for saving records
 
-## 🌟 Características
-✅ 100% compatible con navegadores modernos  
-✅ Interfaz intuitiva y minimalista  
-✅ Código bien documentado para aprendizaje  
-✅ Sin dependencias externas (Vanilla JS)
+## 🌟 Features
+✅ 100% compatible with modern browsers  
+✅ Intuitive and minimalist interface  
+✅ Well-documented code for learning  
+✅ No external dependencies (Vanilla JS)
 
-## 📦 Instalación
-1. Clona el repositorio:
+## 📦 Installation
+1. Clone the repository:
 ```bash
 git clone https://github.com/CUPUL-MIU-04/GAMER-HTML.git
+```
